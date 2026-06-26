@@ -157,7 +157,12 @@
   }
 
   .tab-btn:hover { color: var(--text2); }
-  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  /* 移除 Emoji 後，加入光暈特效與強調色 */
+  .tab-btn.active { 
+    color: var(--gold2); 
+    border-bottom-color: var(--gold); 
+    text-shadow: 0 0 10px rgba(243, 229, 171, 0.6), 0 0 20px rgba(212, 175, 55, 0.4);
+  }
 
   .tab-panel { display: none; padding: 32px 16px 80px; max-width: 680px; margin: 0 auto; }
   .tab-panel.active { display: block; animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -262,7 +267,7 @@
   .edit-section { display: none; margin-top: 24px; }
   .edit-section.show { display: block; }
 
-  /* Tables & Admin elements (Updated for wide viewing) */
+  /* Tables & Admin elements */
   .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
   .stat-box { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; }
   .stat-num { font-size: 28px; font-weight: 600; color: var(--gold); font-family: 'Playfair Display', serif;}
@@ -271,13 +276,13 @@
   .admin-table-wrap { 
     overflow-x: auto; 
     overflow-y: auto;
-    max-height: 65vh; /* 限制高度讓內部可滾動 */
+    max-height: 65vh;
   }
   table { 
     width: 100%; 
     border-collapse: collapse; 
-    font-size: 12px; /* 縮小字體顯示更多資訊 */
-    min-width: 900px; /* 撐開寬度避免自動換行 */
+    font-size: 12px;
+    min-width: 900px;
   }
   th { 
     text-align: left; 
@@ -291,16 +296,16 @@
     position: sticky; 
     top: 0; 
     z-index: 10;
-    white-space: nowrap; /* 不換行 */
+    white-space: nowrap;
   }
   td { 
     padding: 10px; 
     color: var(--text2); 
     border-bottom: 1px solid rgba(255,255,255,0.05); 
-    white-space: nowrap; /* 不換行 */
+    white-space: nowrap;
   }
   .remarks-cell {
-    white-space: normal; /* 備註可視情況換行 */
+    white-space: normal;
     min-width: 120px;
     max-width: 250px;
     line-height: 1.4;
@@ -330,11 +335,11 @@
 </header>
 
 <nav class="tab-nav" id="tabNav">
-  <button class="tab-btn active" onclick="switchTab('info', this)">🍽️ 菜單與資訊</button>
-  <button class="tab-btn" onclick="switchTab('register', this)">✍️ 預約點餐</button>
-  <button class="tab-btn" onclick="switchTab('payment', this)">💳 結帳回報</button>
-  <button class="tab-btn" onclick="switchTab('query', this)">🔍 查詢修改</button>
-  <button class="tab-btn" onclick="switchTab('admin', this)">⚙️ 後台</button>
+  <button class="tab-btn active" onclick="switchTab('info', this)">菜單與資訊</button>
+  <button class="tab-btn" onclick="switchTab('register', this)">預約點餐</button>
+  <button class="tab-btn" onclick="switchTab('payment', this)">結帳回報</button>
+  <button class="tab-btn" onclick="switchTab('query', this)">查詢修改</button>
+  <button class="tab-btn" onclick="switchTab('admin', this)">後台</button>
 </nav>
 
 <section class="tab-panel active" id="tab-info">
@@ -407,12 +412,13 @@
           <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
         </select>
       </div>
+      <!-- 熟度欄位 (動態顯示) -->
       <div class="form-group doneness-group" style="display:none; margin-top:-10px;">
         <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
         <select class="form-select">
           <option value="" disabled selected>請選擇熟度...</option>
           <option value="3分熟">3分熟</option>
-          <option value="5分熟">5分熟 (推薦)</option>
+          <option value="5分熟">5分熟</option>
           <option value="7分熟">7分熟</option>
           <option value="全熟">全熟</option>
         </select>
@@ -533,12 +539,13 @@
             <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
           </select>
         </div>
+        <!-- 修改資料：熟度欄位 -->
         <div class="form-group doneness-group" style="display:none; margin-top:-10px;">
           <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
           <select class="form-select">
             <option value="" disabled selected>請選擇熟度...</option>
             <option value="3分熟">3分熟</option>
-            <option value="5分熟">5分熟 (推薦)</option>
+            <option value="5分熟">5分熟</option>
             <option value="7分熟">7分熟</option>
             <option value="全熟">全熟</option>
           </select>
@@ -652,13 +659,13 @@ function getFullCourseName(selectElement) {
     return name;
 }
 
-// 監聽主餐變化，判斷是否顯示熟度下拉選單
+// 監聽主餐變化，判斷是否顯示熟度下拉選單 (包含安格斯判斷)
 function handleCourseChange(selectEl, type) {
     const group = selectEl.closest('.form-group').nextElementSibling;
     if (group && group.classList.contains('doneness-group')) {
         const text = selectEl.options[selectEl.selectedIndex]?.text || '';
         const dSelect = group.querySelector('select');
-        if (text.includes('牛') || text.includes('鴨') || text.includes('羊')) {
+        if (text.includes('牛') || text.includes('鴨') || text.includes('羊') || text.includes('安格斯')) {
             group.style.display = 'block';
             dSelect.required = true;
         } else {
@@ -762,7 +769,7 @@ function addCompanion(type) {
       <select class="form-select c-doneness">
         <option value="" disabled selected>請選擇熟度...</option>
         <option value="3分熟">3分熟</option>
-        <option value="5分熟">5分熟 (推薦)</option>
+        <option value="5分熟">5分熟</option>
         <option value="7分熟">7分熟</option>
         <option value="全熟">全熟</option>
       </select>
