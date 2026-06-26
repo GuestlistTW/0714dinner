@@ -665,7 +665,7 @@ function handleCourseChange(selectEl, type) {
     if (group && group.classList.contains('doneness-group')) {
         const text = selectEl.options[selectEl.selectedIndex]?.text || '';
         const dSelect = group.querySelector('select');
-        if (text.includes('牛') || text.includes('鴨') || text.includes('羊') || text.includes('安格斯')) {
+        if (text.includes('牛') || text.includes('鴨') || text.includes('羊') || text.includes('安格斯')) || text.includes('沙朗')) {
             group.style.display = 'block';
             dSelect.required = true;
         } else {
