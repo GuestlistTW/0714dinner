@@ -262,16 +262,49 @@
   .edit-section { display: none; margin-top: 24px; }
   .edit-section.show { display: block; }
 
-  /* Tables & Admin elements */
+  /* Tables & Admin elements (Updated for wide viewing) */
   .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
   .stat-box { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; }
   .stat-num { font-size: 28px; font-weight: 600; color: var(--gold); font-family: 'Playfair Display', serif;}
   .stat-label { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; margin-top: 8px; }
   
-  .admin-table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
-  th { text-align: left; padding: 14px; background: rgba(0,0,0,0.3); color: var(--gold); font-weight: 500; letter-spacing: 0.1em; border-bottom: 1px solid rgba(255,255,255,0.1); }
-  td { padding: 14px; color: var(--text2); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .admin-table-wrap { 
+    overflow-x: auto; 
+    overflow-y: auto;
+    max-height: 65vh; /* 限制高度讓內部可滾動 */
+  }
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 12px; /* 縮小字體顯示更多資訊 */
+    min-width: 900px; /* 撐開寬度避免自動換行 */
+  }
+  th { 
+    text-align: left; 
+    padding: 12px 10px; 
+    background: rgba(10,12,20,0.95); 
+    backdrop-filter: blur(8px);
+    color: var(--gold); 
+    font-weight: 500; 
+    letter-spacing: 0.1em; 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+    position: sticky; 
+    top: 0; 
+    z-index: 10;
+    white-space: nowrap; /* 不換行 */
+  }
+  td { 
+    padding: 10px; 
+    color: var(--text2); 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    white-space: nowrap; /* 不換行 */
+  }
+  .remarks-cell {
+    white-space: normal; /* 備註可視情況換行 */
+    min-width: 120px;
+    max-width: 250px;
+    line-height: 1.4;
+  }
 
   /* Utilities */
   .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: rgba(20,20,20,0.95); border: 1px solid var(--gold); border-radius: 8px; padding: 14px 24px; font-size: 14px; color: var(--gold2); z-index: 999; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -361,7 +394,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">選擇主餐 <span style="color:var(--error)">*</span></label>
-        <select class="form-select main-course-select" id="reg-course" onchange="updatePrice('reg')" required>
+        <select class="form-select main-course-select" id="reg-course" onchange="handleCourseChange(this, 'reg')" required>
           <option value="" disabled selected>請選擇您的主餐...</option>
           <option value="609">歐風雞腿佐莎莎醬 ($609)</option>
           <option value="619">燻焙豚梅花佐蘋果醬 ($619)</option>
@@ -372,6 +405,16 @@
           <option value="769">安格斯菲力佐黑松露乳酪 ($769)</option>
           <option value="799">迷迭香小羔羊佐薄荷芥末籽醬 ($799)</option>
           <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
+        </select>
+      </div>
+      <div class="form-group doneness-group" style="display:none; margin-top:-10px;">
+        <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
+        <select class="form-select">
+          <option value="" disabled selected>請選擇熟度...</option>
+          <option value="3分熟">3分熟</option>
+          <option value="5分熟">5分熟 (推薦)</option>
+          <option value="7分熟">7分熟</option>
+          <option value="全熟">全熟</option>
         </select>
       </div>
       <div class="form-group" style="margin-bottom:0">
@@ -477,7 +520,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">更改主餐</label>
-          <select class="form-select main-course-select" id="edit-course" onchange="updatePrice('edit')" required>
+          <select class="form-select main-course-select" id="edit-course" onchange="handleCourseChange(this, 'edit')" required>
             <option value="" disabled>請選擇您的主餐...</option>
             <option value="609">歐風雞腿佐莎莎醬 ($609)</option>
             <option value="619">燻焙豚梅花佐蘋果醬 ($619)</option>
@@ -490,6 +533,17 @@
             <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
           </select>
         </div>
+        <div class="form-group doneness-group" style="display:none; margin-top:-10px;">
+          <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
+          <select class="form-select">
+            <option value="" disabled selected>請選擇熟度...</option>
+            <option value="3分熟">3分熟</option>
+            <option value="5分熟">5分熟 (推薦)</option>
+            <option value="7分熟">7分熟</option>
+            <option value="全熟">全熟</option>
+          </select>
+        </div>
+        
         <div class="form-group">
           <label class="form-label">飲食備註與許願池</label>
           <textarea class="form-textarea" id="edit-remarks"></textarea>
@@ -584,9 +638,36 @@ function copyAccount() {
   });
 }
 
-function getCourseName(selectElement) {
+// 取得帶有熟度的完整主餐名稱
+function getFullCourseName(selectElement) {
     if(!selectElement || selectElement.selectedIndex === -1 || selectElement.value === "") return "未選擇";
-    return selectElement.options[selectElement.selectedIndex].text.split(' (')[0];
+    let name = selectElement.options[selectElement.selectedIndex].text.split(' (')[0];
+    const group = selectElement.closest('.form-group').nextElementSibling;
+    if (group && group.classList.contains('doneness-group') && group.style.display !== 'none') {
+        const dSelect = group.querySelector('select');
+        if(dSelect && dSelect.value) {
+            name += ` - ${dSelect.value}`;
+        }
+    }
+    return name;
+}
+
+// 監聽主餐變化，判斷是否顯示熟度下拉選單
+function handleCourseChange(selectEl, type) {
+    const group = selectEl.closest('.form-group').nextElementSibling;
+    if (group && group.classList.contains('doneness-group')) {
+        const text = selectEl.options[selectEl.selectedIndex]?.text || '';
+        const dSelect = group.querySelector('select');
+        if (text.includes('牛') || text.includes('鴨') || text.includes('羊')) {
+            group.style.display = 'block';
+            dSelect.required = true;
+        } else {
+            group.style.display = 'none';
+            dSelect.required = false;
+            dSelect.value = '';
+        }
+    }
+    updatePrice(type);
 }
 
 async function verifyPhoneInput(el) {
@@ -638,8 +719,8 @@ async function verifyPhoneInput(el) {
 
 // ── COMPANIONS & PRICE ──
 let compCounters = { reg: 0, edit: 0 };
-const VENUE_FEE = 65; // 包場費用
-const SERVICE_CHARGE_RATE = 0.1; // 服務費 10%
+const VENUE_FEE = 65; 
+const SERVICE_CHARGE_RATE = 0.1; 
 
 function addCompanion(type) {
   compCounters[type]++;
@@ -648,7 +729,6 @@ function addCompanion(type) {
   div.className = 'companion-item';
   div.id = `comp-${type}-${compCounters[type]}`;
   
-  // 主餐選項加入 disabled selected 預設防呆
   div.innerHTML = `
     <div class="companion-header">同行友人 ${compCounters[type]}</div>
     <button type="button" class="companion-remove" onclick="removeCompanion('${type}', ${compCounters[type]})">移除</button>
@@ -664,7 +744,7 @@ function addCompanion(type) {
     </div>
     <div class="form-group" style="margin-bottom:16px">
       <label class="form-label">選擇主餐 <span style="color:var(--error)">*</span></label>
-      <select class="form-select c-course" onchange="updatePrice('${type}')" required>
+      <select class="form-select c-course" onchange="handleCourseChange(this, '${type}')" required>
         <option value="" disabled selected>請選擇主餐...</option>
         <option value="609">歐風雞腿佐莎莎醬 ($609)</option>
         <option value="619">燻焙豚梅花佐蘋果醬 ($619)</option>
@@ -675,6 +755,16 @@ function addCompanion(type) {
         <option value="769">安格斯菲力佐黑松露乳酪 ($769)</option>
         <option value="799">迷迭香小羔羊佐薄荷芥末籽醬 ($799)</option>
         <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
+      </select>
+    </div>
+    <div class="form-group doneness-group" style="display:none; margin-top:-10px; margin-bottom:16px">
+      <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
+      <select class="form-select c-doneness">
+        <option value="" disabled selected>請選擇熟度...</option>
+        <option value="3分熟">3分熟</option>
+        <option value="5分熟">5分熟 (推薦)</option>
+        <option value="7分熟">7分熟</option>
+        <option value="全熟">全熟</option>
       </select>
     </div>
     <div class="form-group" style="margin-bottom:0">
@@ -701,7 +791,7 @@ function updatePrice(type) {
   const mainSelect = document.getElementById(type + '-course');
   if(mainSelect.value) {
       const mPrice = parseInt(mainSelect.value) || 0;
-      const mName = getCourseName(mainSelect);
+      const mName = getFullCourseName(mainSelect);
       const mService = Math.round(mPrice * SERVICE_CHARGE_RATE);
       const mTotal = mPrice + mService + VENUE_FEE;
       
@@ -719,7 +809,7 @@ function updatePrice(type) {
     
     if(cSelect.value) {
         const cPrice = parseInt(cSelect.value) || 0;
-        const cCourseName = getCourseName(cSelect);
+        const cCourseName = getFullCourseName(cSelect);
         const cService = Math.round(cPrice * SERVICE_CHARGE_RATE);
         const cTotal = cPrice + cService + VENUE_FEE;
 
@@ -744,11 +834,10 @@ function getCompanionsData(type) {
   const boxes = document.getElementById(type + '-companions').querySelectorAll('.companion-item');
   boxes.forEach(box => {
     const cSelect = box.querySelector('.c-course');
-    // GAS 若需記錄最原始點餐費則保留 cSelect.value
     comps.push({
       name: box.querySelector('.c-name').value,
       phone: box.querySelector('.c-phone').value,
-      mainCourse: getCourseName(cSelect), 
+      mainCourse: getFullCourseName(cSelect), 
       price: parseInt(cSelect.value) || 0,
       pay: box.querySelector('.c-pay').value
     });
@@ -785,11 +874,11 @@ async function submitRegistration(e) {
     phone: document.getElementById('reg-phone').value.trim(),
     name: document.getElementById('reg-name').value.trim(),
     ig: document.getElementById('reg-ig').value.trim(),
-    mainCourse: getCourseName(mainSelect),
-    price: parseInt(mainSelect.value), // 將基礎價格傳後台，總價用下方的 total
+    mainCourse: getFullCourseName(mainSelect),
+    price: parseInt(mainSelect.value), 
     remarks: document.getElementById('reg-remarks').value.trim(),
     companions: getCompanionsData('reg'),
-    total: updatePrice('reg') // 這裡送出的已經是加總服務費與包場費的最終金額
+    total: updatePrice('reg') 
   };
 
   try {
@@ -797,6 +886,8 @@ async function submitRegistration(e) {
     if(res.status === 'success') {
       showToast('🎉 訂位成功！請前往結帳', 5000);
       e.target.reset();
+      // Reset doneness visibility
+      document.querySelectorAll('.doneness-group').forEach(el => el.style.display = 'none');
       document.getElementById('reg-companions').innerHTML = '';
       updatePrice('reg');
       switchTab('payment', document.querySelectorAll('.tab-btn')[2]);
@@ -865,15 +956,15 @@ async function fetchDataForEdit() {
     if(res.status === 'success') {
       const data = res.data;
       document.getElementById('q-name').textContent = data.name;
-      const courseText = data.mainCourse || data.shuttle || '未紀錄';
-      document.getElementById('q-course').textContent = courseText;
+      
+      const courseTextRaw = data.mainCourse || data.shuttle || '未紀錄';
+      document.getElementById('q-course').textContent = courseTextRaw;
       
       const badge = document.getElementById('q-status-badge');
       let status = data.payStatus || "未付款";
       if (status !== "已付款" && status !== "主揪代付" && (data.transferDate || data.account5 || data.transferAmount)) status = "帳款確認中";
 
       badge.textContent = status;
-      
       if(status === '已付款' || status === '主揪代付') {
          badge.className = 'result-status status-paid';
       } else if(status === '帳款確認中') {
@@ -890,8 +981,18 @@ async function fetchDataForEdit() {
       document.getElementById('edit-ig').value = data.ig || '';
       document.getElementById('edit-remarks').value = data.remarks || '';
       
-      if(coursePriceMap[courseText]) {
-          document.getElementById('edit-course').value = coursePriceMap[courseText];
+      // 解析原本儲存的主餐與熟度字串
+      const parts = courseTextRaw.split(' - ');
+      const baseCourse = parts[0];
+      const doneness = parts[1] || '';
+
+      if(coursePriceMap[baseCourse]) {
+          const editCourseSel = document.getElementById('edit-course');
+          editCourseSel.value = coursePriceMap[baseCourse];
+          handleCourseChange(editCourseSel, 'edit'); 
+          if(doneness) {
+             editCourseSel.closest('.form-group').nextElementSibling.querySelector('select').value = doneness;
+          }
       }
       
       document.getElementById('edit-companions').innerHTML = '';
@@ -908,9 +1009,19 @@ async function fetchDataForEdit() {
                const box = document.getElementById(`comp-edit-${compCounters['edit']}`);
                box.querySelector('.c-name').value = c.name;
                box.querySelector('.c-phone').value = c.phone || '';
-               const cCourse = c.mainCourse || c.shuttle || '';
-               if(coursePriceMap[cCourse]) {
-                   box.querySelector('.c-course').value = coursePriceMap[cCourse];
+               
+               const cCourseRaw = c.mainCourse || c.shuttle || '';
+               const cParts = cCourseRaw.split(' - ');
+               const cBase = cParts[0];
+               const cDone = cParts[1] || '';
+
+               if(coursePriceMap[cBase]) {
+                   const cSel = box.querySelector('.c-course');
+                   cSel.value = coursePriceMap[cBase];
+                   handleCourseChange(cSel, 'edit');
+                   if(cDone) {
+                       box.querySelector('.c-doneness').value = cDone;
+                   }
                }
                box.querySelector('.c-pay').value = c.pay || 'split';
             });
@@ -944,7 +1055,7 @@ async function submitEdit(e) {
     phone: phone,
     name: document.getElementById('edit-name').value.trim(),
     ig: document.getElementById('edit-ig').value.trim(),
-    mainCourse: getCourseName(editSelect),
+    mainCourse: getFullCourseName(editSelect),
     price: parseInt(editSelect.value),
     remarks: document.getElementById('edit-remarks').value.trim(),
     companions: getCompanionsData('edit'),
@@ -1046,7 +1157,7 @@ function renderAdminTable() {
     if(row.mainPhone) {
        const mainPerson = adminGlobalData.find(r => r.phone === row.mainPhone);
        const mainName = mainPerson ? mainPerson.name : '未知';
-       dispName += ` <span style="font-size:11px;color:var(--gold); border:1px solid var(--border); padding:2px 6px;border-radius:4px;">(${mainName} 的攜伴)</span>`;
+       dispName += ` <span style="font-size:11px;color:var(--gold); border:1px solid var(--border); padding:2px 6px;border-radius:4px; margin-left:4px;">(${mainName} 攜伴)</span>`;
     }
 
     let mPhone = row.phone;
@@ -1073,7 +1184,7 @@ function renderAdminTable() {
         <td style="font-family:monospace;letter-spacing:0.05em">${mPhone}</td>
         <td style="color:var(--text); font-weight:500;">${mCourse}</td>
         <td style="font-weight:600;color:var(--gold2)">$${row.total}</td>
-        <td>${mRemarks}</td>
+        <td class="remarks-cell">${mRemarks}</td>
         <td>${statusHtml}</td>
         <td>${btnHtml}</td>
       </tr>
