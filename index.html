@@ -157,7 +157,7 @@
   }
 
   .tab-btn:hover { color: var(--text2); }
-  /* 移除 Emoji 後，加入光暈特效與強調色 */
+  /* 光暈特效與強調色 */
   .tab-btn.active { 
     color: var(--gold2); 
     border-bottom-color: var(--gold); 
@@ -659,13 +659,14 @@ function getFullCourseName(selectElement) {
     return name;
 }
 
-// 監聽主餐變化，判斷是否顯示熟度下拉選單 (包含安格斯判斷)
+// 監聽主餐變化，判斷是否顯示熟度下拉選單 (加入沙朗判斷)
 function handleCourseChange(selectEl, type) {
     const group = selectEl.closest('.form-group').nextElementSibling;
     if (group && group.classList.contains('doneness-group')) {
         const text = selectEl.options[selectEl.selectedIndex]?.text || '';
         const dSelect = group.querySelector('select');
-        if (text.includes('牛') || text.includes('鴨') || text.includes('羊') || text.includes('安格斯')) || text.includes('沙朗')) {
+        // 這裡加上了 '沙朗' 的關鍵字判斷
+        if (text.includes('牛') || text.includes('鴨') || text.includes('羊') || text.includes('安格斯') || text.includes('沙朗')) {
             group.style.display = 'block';
             dSelect.required = true;
         } else {
