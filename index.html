@@ -56,8 +56,8 @@
 
   .image-background-layer {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    /* 替換為主視覺圖 */
-    background: url('巨蟹主視覺圖.png') center/cover no-repeat;
+    /* 替換為主視覺圖網址 */
+    background: url('https://cdn-general.cybassets.com/s/files/35135/theme/127586/assets/main.jpg') center/cover no-repeat;
     z-index: 0; opacity: 0.75;
   }
   
@@ -304,7 +304,6 @@
   <button class="tab-btn" onclick="switchTab('admin', this)">⚙️ 後台</button>
 </nav>
 
-<!-- 🍽️ 菜單與資訊 -->
 <section class="tab-panel active" id="tab-info">
   <div class="card">
     <div class="card-title">晚宴資訊</div>
@@ -320,14 +319,14 @@
   <div class="card">
     <div class="card-title">精選前菜與自助吧</div>
     <p class="text-sm" style="margin-bottom: 16px;">精心準備的開胃小點與豐盛自助吧，為美好的夜晚揭開序幕。</p>
-    <img src="前菜.png" alt="前菜" class="menu-image">
-    <img src="自助吧.png" alt="自助吧" class="menu-image">
+    <img src="https://cdn-general.cybassets.com/s/files/35135/theme/127586/assets/front.jpg" alt="前菜" class="menu-image">
+    <img src="https://cdn-general.cybassets.com/s/files/35135/theme/127586/assets/bar.jpg" alt="自助吧" class="menu-image">
   </div>
 
   <div class="card">
     <div class="card-title">主餐選擇 (9選1)</div>
     <p class="text-sm" style="margin-bottom: 16px;">請於「預約點餐」頁面選擇您與同行友人的專屬主餐。</p>
-    <img src="主餐商品卡.png" alt="主餐商品卡" class="menu-image">
+    <img src="https://cdn-general.cybassets.com/s/files/35135/theme/127586/assets/melt.jpg" alt="主餐商品卡" class="menu-image">
     <ul style="list-style: none; padding: 0; margin-top: 16px;">
       <li class="info-row"><span class="info-value">歐風雞腿佐莎莎醬</span><span class="info-label">$609</span></li>
       <li class="info-row"><span class="info-value">燻焙豚梅花佐蘋果醬</span><span class="info-label">$619</span></li>
@@ -342,7 +341,6 @@
   </div>
 </section>
 
-<!-- ✍️ 預約點餐 -->
 <section class="tab-panel" id="tab-register">
   <form id="regForm" onsubmit="submitRegistration(event)">
     <div class="card">
@@ -391,8 +389,7 @@
 
     <div class="price-summary">
       <div id="reg-calc-detail" style="line-height: 1.8;">
-        <!-- JS 明細注入 -->
-      </div>
+        </div>
       <div class="price-total-row">
         <span class="price-total-label">您的結帳總額</span>
         <span class="price-total-amount" id="reg-total">NT$ 0</span>
@@ -404,7 +401,6 @@
   </form>
 </section>
 
-<!-- 💳 結帳回報 -->
 <section class="tab-panel" id="tab-payment">
   <div class="payment-method">
     <div class="bank-name">官方收款帳戶</div>
@@ -440,7 +436,6 @@
   </form>
 </section>
 
-<!-- 🔍 查詢修改 -->
 <section class="tab-panel" id="tab-query">
   <div class="card">
     <div class="card-title">查詢訂位資料</div>
@@ -519,7 +514,6 @@
   </div>
 </section>
 
-<!-- ⚙️ 後台 -->
 <section class="tab-panel" id="tab-admin">
   <div id="adminLogin" class="card" style="padding: 40px 20px; text-align: center;">
     <div class="card-title" style="justify-content:center; letter-spacing:0.3em; margin-bottom:24px">VIP ADMIN</div>
@@ -563,7 +557,7 @@
 
 <script>
 // ── CONFIG ──
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwWmJ1-8Y823TDIwUNDUna-Va9VMS8wZVcocGEaKuuCHzu_fFKLR5b20ihPPsmFMK_i/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwVL5tggzYX-BoHT88uRUKEo4OFdFuuQ1y5E3ILOtIY4NYXYUk_kRHoj4A3YZX2jm-W/exec";
 let adminGlobalData = [];
 
 // ── UTILS ──
