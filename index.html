@@ -56,11 +56,18 @@
 
   .image-background-layer {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    /* 替換為主視覺圖網址 */
+    /* 手機版主視覺圖 */
     background: url('https://cdn-general.cybassets.com/s/files/35135/theme/127586/assets/dinner.jpg') center/cover no-repeat;
     z-index: 0; opacity: 0.75;
   }
   
+  /* 電腦版主視覺圖切換 */
+  @media (min-width: 768px) {
+    .image-background-layer {
+      background: url('https://cdn-general.cybassets.com/s/files/35135/theme/127586/assets/dinner2.jpg') center/cover no-repeat;
+    }
+  }
+
   .overlay-layer {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
     background: linear-gradient(to bottom, rgba(8,10,15,0.2) 0%, rgba(8,10,15,0.6) 75%, rgba(8,10,15,1) 100%);
@@ -240,7 +247,7 @@
   .price-summary { background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.02)); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin: 24px 0; }
   .price-total-row { display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
   .price-total-label { font-size: 14px; color: var(--text2); font-weight: 500; letter-spacing: 0.1em; }
-  .price-total-amount { font-size: 28px; font-weight: 600; color: var(--gold2); font-family: 'Playfair Display', serif;}
+  .price-total-amount { font-size: 28px; font-weight: 600; color: var(--gold2); font-family: 'Montserrat', sans-serif; }
 
   /* ── SUBMIT BTN ── */
   .submit-btn { width: 100%; padding: 18px; background: var(--gold); border: none; border-radius: 8px; color: #000; font-size: 15px; font-weight: 600; cursor: pointer; letter-spacing: 0.15em; transition: all 0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); display: flex; justify-content: center; align-items: center; text-transform: uppercase; }
@@ -253,7 +260,8 @@
   /* ── PAYMENT TAB ── */
   .payment-method { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 16px; padding: 32px 20px; margin-bottom: 20px; text-align: center; }
   .bank-name { font-size: 13px; color: var(--text2); letter-spacing: 0.15em; margin-bottom: 12px; }
-  .account-number { font-size: 32px; font-weight: 600; color: var(--gold2); letter-spacing: 0.1em; margin: 16px 0; font-family: 'Playfair Display', serif; }
+  /* 修改為 Montserrat 現代無襯線字體，並微調字距，讓數字更具俐落感 */
+  .account-number { font-size: 32px; font-weight: 600; color: var(--gold2); letter-spacing: 0.15em; margin: 16px 0; font-family: 'Montserrat', sans-serif; }
   .copy-btn { padding: 10px 24px; background: transparent; border: 1px solid var(--gold); border-radius: 100px; color: var(--gold); font-size: 13px; cursor: pointer; transition: all 0.3s; font-weight: 500; letter-spacing: 0.1em;}
   .copy-btn:hover { background: var(--gold); color: #000; }
 
@@ -412,7 +420,6 @@
           <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
         </select>
       </div>
-      <!-- 熟度欄位 (動態顯示) -->
       <div class="form-group doneness-group" style="display:none; margin-top:-10px;">
         <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
         <select class="form-select">
@@ -539,7 +546,6 @@
             <option value="839">燉烤帶骨牛小排佐紅酒莓果醬 ($839)</option>
           </select>
         </div>
-        <!-- 修改資料：熟度欄位 -->
         <div class="form-group doneness-group" style="display:none; margin-top:-10px;">
           <label class="form-label">選擇熟度 <span style="color:var(--error)">*</span></label>
           <select class="form-select">
@@ -588,7 +594,13 @@
   <div id="adminDashboard" style="display:none">
     <div class="admin-stats">
       <div class="stat-box">
-        <div class="stat-num" id="stat-total">0</div><div class="stat-label">總訂位數</div>
+        <div class="stat-num" id="stat-total">0</div><div class="stat-label">總報名</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-paid" style="color:var(--success)">0</div><div class="stat-label">已付款</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-unpaid" style="color:var(--error)">0</div><div class="stat-label">未付款</div>
       </div>
       <div class="stat-box">
         <div class="stat-num" id="stat-amount" style="color:var(--gold2)">$0</div><div class="stat-label">預期營收</div>
@@ -1088,7 +1100,8 @@ async function submitEdit(e) {
 // ── TAB 5: ADMIN ──
 async function adminLogin() {
   const pw = document.getElementById('adminPw').value;
-  if(pw !== '0714') { 
+  // 密碼修改為 0514
+  if(pw !== '0514') { 
     document.getElementById('adminLoginError').style.display = 'block';
     return;
   }
@@ -1141,12 +1154,22 @@ async function refreshAdminData() {
 function calcAdminStats() {
   const total = adminGlobalData.length;
   let revenue = 0;
+  let paidCount = 0;
+  let unpaidCount = 0;
 
   adminGlobalData.forEach(row => {
     revenue += (parseInt(row.total) || 0);
+    // 統計已付款與未付款
+    if (row.payStatus === '已付款' || row.payStatus === '主揪代付') {
+      paidCount++;
+    } else {
+      unpaidCount++;
+    }
   });
 
   document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-paid').textContent = paidCount;
+  document.getElementById('stat-unpaid').textContent = unpaidCount;
   document.getElementById('stat-amount').textContent = '$' + revenue.toLocaleString();
 }
 
